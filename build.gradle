@@ -1,0 +1,16 @@
+plugins { 
+  id "com.palantir.docker" version "0.26.0" apply false
+}
+
+ext {
+    repoUser = 'rahogata'
+    imageName = 'fontforge-cli'
+}
+
+allprojects {
+    group = 'in.co.rahogata'
+}
+
+subprojects {
+    apply plugin: 'com.palantir.docker'
+}

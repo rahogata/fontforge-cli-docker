@@ -1,0 +1,5 @@
+//base name for the project
+rootProject.name = 'fontforge-cli-docker'
+
+//All Modules 
+include	':debian'

@@ -1,0 +1,6 @@
+docker {
+    name "$repoUser/$imageName"
+    tag 'Version', "$repoUser/$imageName:$version"
+    pull true
+}
+

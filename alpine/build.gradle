@@ -1,0 +1,8 @@
+ext {
+    tagName = imageName + '-alpine'
+}
+
+docker {
+    name "$dockerRepo/$repoUser/$imageName"
+    pull true
+}
