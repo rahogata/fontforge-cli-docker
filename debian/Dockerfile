@@ -19,7 +19,10 @@ RUN set -eux; \
         libpango1.0-dev \
         libreadline-dev \
         libwoff-dev \
-        xz-utils" \
+        xz-utils \
+        wget \
+        autoconf \
+        automake" \
     ;\
 # Runtime deps
     runtimeDeps="libcairo2 \
@@ -34,13 +37,21 @@ RUN set -eux; \
         libtiff6 \
         libtool \
         libpango1.0-0 \
+        libreadline8 \
         libxml2 \
-        woff2 \
-        wget" \
+        woff2" \
     ;\
     apt-get update; \
     printf "$buildDeps" | tr ' ' '\n' | xargs apt-get install -y --no-install-recommends \
     && printf "$runtimeDeps" | tr ' ' '\n' | xargs apt-get install -y --no-install-recommends \
+    && tempDir="$(mktemp -d)"; cd "$tempDir"; \
+    wget https://github.com/fontforge/libuninameslist/releases/download/20221022/libuninameslist-dist-20221022.tar.gz \
+    && echo '92c833936d653b2f205fb5e7ac82818311824dabdc7abdc2e81f07c3a0ea39bb  libuninameslist-dist-20221022.tar.gz' | sha256sum -c \
+    && tar xf libuninameslist-dist-20221022.tar.gz \
+    && cd libuninameslist-20221022/; \
+       ./configure --prefix="/usr/local" \
+    && make install \
+    && cd /; rm -rf "$tempDir" \
     && tempDir="$(mktemp -d)"; cd "$tempDir"; \
     wget -q https://github.com/fontforge/fontforge/releases/download/20230101/fontforge-20230101.tar.xz \
     && echo 'ca82ec4c060c4dda70ace5478a41b5e7b95eb035fe1c4cf85c48f996d35c60f8  fontforge-20230101.tar.xz' | sha256sum -c \
@@ -54,7 +65,10 @@ RUN set -eux; \
         -GNinja \
         -DENABLE_GUI=OFF \
         -DENABLE_FONTFORGE_EXTRAS=ON \
+        -DENABLE_DOCS=off \
         -DPython3_EXECUTABLE=/usr/local/bin/python3 \
+        -DCMAKE_FIND_FRAMEWORK=LAST \
+        -DENABLE_DOCS=off \
     && cmake --build build \
     && cmake --install build \
     && cd /; rm -rf "$tempDir" \
